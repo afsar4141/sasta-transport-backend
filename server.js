@@ -9,14 +9,27 @@ const {
 } = require("./services/whatsapp.service");
 
 const app = express();
-app.use(cors());
+//app.use(cors());
+//app.use(express.json());
+
+// =====================
+// MIDDLEWARES (FIXED FOR PROD)
+// =====================
+app.use(cors({
+  origin: true, // allow all origins (safe for your use case)
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-admin-key"],
+  credentials: true
+}));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // =====================
 // ADMIN KEY
 // =====================
-const ADMIN_KEY = "sastatransport-admin-9053";
-const ADMIN_PHONE = "9140727216"; // admin WhatsApp number
+const ADMIN_KEY = process.env.ADMIN_KEY;
+const ADMIN_PHONE = process.env.ADMIN_PHONE; // admin WhatsApp number
 
 const adminAuth = (req, res, next) => {
   if (req.headers["x-admin-key"] !== ADMIN_KEY) {
